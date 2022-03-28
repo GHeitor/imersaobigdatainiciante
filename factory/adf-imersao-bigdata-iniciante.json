@@ -1,0 +1,9 @@
+{
+	"name": "adf-imersao-bigdata-iniciante",
+	"location": "eastus2",
+	"identity": {
+		"type": "SystemAssigned",
+		"principalId": "772bc030-c856-4b74-b6e9-ec5532023525",
+		"tenantId": "982a9256-b9ac-4c22-8493-5bd9e3d6611c"
+	}
+}
