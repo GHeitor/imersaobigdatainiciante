@@ -45,7 +45,7 @@
 					"storedProcedureName": "[SalesLT].[sp_atualiza_status_prod]",
 					"storedProcedureParameters": {
 						"preco": {
-							"value": "45",
+							"value": "55",
 							"type": "Decimal"
 						}
 					}
