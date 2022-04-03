@@ -1,16 +1,22 @@
 {
 	"name": "ls_sqlserver_local",
-	"type": "Microsoft.DataFactory/factories/linkedservices",
 	"properties": {
 		"annotations": [],
 		"type": "SqlServer",
 		"typeProperties": {
-			"connectionString": "integrated security=False;data source=LAPTOP-CHPV62TS\\SQLEXPRESS;initial catalog=BD_EVENTOS_IMERSAO;user id=sa",
-			"encryptedCredential": "eyJDcmVkZW50aWFsSWQiOiJlM2Q5ZjRlOC00NjRmLTQ3MDMtOWM4MC1iMDNlNmU5MzhjNTMiLCJWZXJzaW9uIjoiMi4wIiwiQ2xhc3NUeXBlIjoiTWljcm9zb2Z0LkRhdGFQcm94eS5Db3JlLkludGVyU2VydmljZURhdGFDb250cmFjdC5DcmVkZW50aWFsU1UwNkNZMTQifQ=="
+			"connectionString": {
+				"type": "AzureKeyVaultSecret",
+				"store": {
+					"referenceName": "ls_key_vault",
+					"type": "LinkedServiceReference"
+				},
+				"secretName": "kv-sql-server-local"
+			}
 		},
 		"connectVia": {
 			"referenceName": "ir-selfhosted-azure",
 			"type": "IntegrationRuntimeReference"
 		}
-	}
+	},
+	"type": "Microsoft.DataFactory/factories/linkedservices"
 }
