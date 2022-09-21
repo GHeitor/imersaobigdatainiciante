@@ -77,7 +77,7 @@
 				"userProperties": [],
 				"typeProperties": {
 					"items": {
-						"value": "@activity('Lookup Controller').output.value",
+						"value": "@activity('Filter Table Load').output.value",
 						"type": "Expression"
 					},
 					"activities": [
