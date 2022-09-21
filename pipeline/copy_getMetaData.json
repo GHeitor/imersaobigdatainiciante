@@ -3,7 +3,7 @@
 	"properties": {
 		"activities": [
 			{
-				"name": "Get Metadata1",
+				"name": "Get Metadata File",
 				"type": "GetMetadata",
 				"dependsOn": [],
 				"policy": {
@@ -13,14 +13,39 @@
 					"secureOutput": false,
 					"secureInput": false
 				},
-				"userProperties": []
+				"userProperties": [],
+				"typeProperties": {
+					"dataset": {
+						"referenceName": "ds_dls_csv",
+						"type": "DatasetReference",
+						"parameters": {
+							"container": "files",
+							"path": {
+								"value": "@toLower('')",
+								"type": "Expression"
+							},
+							"file": "moviesDB.csv",
+							"delimiter": ","
+						}
+					},
+					"fieldList": [
+						"columnCount"
+					],
+					"storeSettings": {
+						"type": "AzureBlobFSReadSettings",
+						"enablePartitionDiscovery": false
+					},
+					"formatSettings": {
+						"type": "DelimitedTextReadSettings"
+					}
+				}
 			},
 			{
-				"name": "Get Metadata2",
+				"name": "Get Metadata Folder",
 				"type": "GetMetadata",
 				"dependsOn": [
 					{
-						"activity": "Get Metadata1",
+						"activity": "Get Metadata File",
 						"dependencyConditions": [
 							"Succeeded"
 						]
@@ -33,14 +58,45 @@
 					"secureOutput": false,
 					"secureInput": false
 				},
-				"userProperties": []
+				"userProperties": [],
+				"typeProperties": {
+					"dataset": {
+						"referenceName": "ds_dls_csv",
+						"type": "DatasetReference",
+						"parameters": {
+							"container": "files",
+							"path": {
+								"value": "@toLower('')",
+								"type": "Expression"
+							},
+							"file": {
+								"value": "@toLower('')",
+								"type": "Expression"
+							},
+							"delimiter": {
+								"value": "@toLower('')",
+								"type": "Expression"
+							}
+						}
+					},
+					"fieldList": [
+						"childItems"
+					],
+					"storeSettings": {
+						"type": "AzureBlobFSReadSettings",
+						"enablePartitionDiscovery": false
+					},
+					"formatSettings": {
+						"type": "DelimitedTextReadSettings"
+					}
+				}
 			},
 			{
-				"name": "Get Metadata3",
+				"name": "Get Metadata Table",
 				"type": "GetMetadata",
 				"dependsOn": [
 					{
-						"activity": "Get Metadata2",
+						"activity": "Get Metadata Folder",
 						"dependencyConditions": [
 							"Succeeded"
 						]
@@ -53,7 +109,54 @@
 					"secureOutput": false,
 					"secureInput": false
 				},
-				"userProperties": []
+				"userProperties": [],
+				"typeProperties": {
+					"dataset": {
+						"referenceName": "ds_azuredb",
+						"type": "DatasetReference",
+						"parameters": {
+							"Schema": "SalesLT",
+							"TableName": "TB_PlanCor"
+						}
+					},
+					"fieldList": [
+						"columnCount"
+					]
+				}
+			},
+			{
+				"name": "Get Metadata File 2",
+				"type": "GetMetadata",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "7.00:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"dataset": {
+						"referenceName": "ds_dls_csv_s_directory",
+						"type": "DatasetReference",
+						"parameters": {
+							"container": "files",
+							"file": "cidades.csv",
+							"delimiter": ","
+						}
+					},
+					"fieldList": [
+						"contentMD5"
+					],
+					"storeSettings": {
+						"type": "AzureBlobFSReadSettings",
+						"enablePartitionDiscovery": false
+					},
+					"formatSettings": {
+						"type": "DelimitedTextReadSettings"
+					}
+				}
 			}
 		],
 		"folder": {
