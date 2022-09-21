@@ -2,7 +2,7 @@
 	"name": "ds_azuredb_customer",
 	"properties": {
 		"linkedServiceName": {
-			"referenceName": "ls_azure_sqldb",
+			"referenceName": "ls_azure_sqldb_powerquery",
 			"type": "LinkedServiceReference"
 		},
 		"annotations": [],
