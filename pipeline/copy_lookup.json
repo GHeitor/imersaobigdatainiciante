@@ -1,0 +1,241 @@
+{
+	"name": "copy_lookup",
+	"properties": {
+		"activities": [
+			{
+				"name": "Lookup Controller",
+				"type": "Lookup",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"source": {
+						"type": "DelimitedTextSource",
+						"storeSettings": {
+							"type": "AzureBlobFSReadSettings",
+							"recursive": true,
+							"enablePartitionDiscovery": false
+						},
+						"formatSettings": {
+							"type": "DelimitedTextReadSettings"
+						}
+					},
+					"dataset": {
+						"referenceName": "ds_dls_csv",
+						"type": "DatasetReference",
+						"parameters": {
+							"container": "files",
+							"path": "controller",
+							"file": "controller_tables.csv",
+							"delimiter": ";"
+						}
+					},
+					"firstRowOnly": false
+				}
+			},
+			{
+				"name": "Lookup CSV Singleton",
+				"type": "Lookup",
+				"dependsOn": [
+					{
+						"activity": "Lookup Controller",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"source": {
+						"type": "DelimitedTextSource",
+						"storeSettings": {
+							"type": "AzureBlobFSReadSettings",
+							"recursive": true,
+							"enablePartitionDiscovery": false
+						},
+						"formatSettings": {
+							"type": "DelimitedTextReadSettings"
+						}
+					},
+					"dataset": {
+						"referenceName": "ds_dls_csv_s_directory",
+						"type": "DatasetReference",
+						"parameters": {
+							"container": "files",
+							"file": "cidades.csv",
+							"delimiter": ";"
+						}
+					}
+				}
+			},
+			{
+				"name": "Lookup Table Singleton",
+				"type": "Lookup",
+				"dependsOn": [
+					{
+						"activity": "Lookup CSV Singleton",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"source": {
+						"type": "AzureSqlSource",
+						"queryTimeout": "02:00:00",
+						"partitionOption": "None"
+					},
+					"dataset": {
+						"referenceName": "ds_azuredb",
+						"type": "DatasetReference",
+						"parameters": {
+							"Schema": "SalesLT",
+							"TableName": "TB_PlanCor"
+						}
+					}
+				}
+			},
+			{
+				"name": "Lookup CSV Array",
+				"type": "Lookup",
+				"dependsOn": [
+					{
+						"activity": "Lookup Table Singleton",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"source": {
+						"type": "DelimitedTextSource",
+						"storeSettings": {
+							"type": "AzureBlobFSReadSettings",
+							"recursive": true,
+							"enablePartitionDiscovery": false
+						},
+						"formatSettings": {
+							"type": "DelimitedTextReadSettings"
+						}
+					},
+					"dataset": {
+						"referenceName": "ds_dls_csv_s_directory",
+						"type": "DatasetReference",
+						"parameters": {
+							"container": "files",
+							"file": "cidades.csv",
+							"delimiter": ";"
+						}
+					},
+					"firstRowOnly": false
+				}
+			},
+			{
+				"name": "Lookup Table Array",
+				"type": "Lookup",
+				"dependsOn": [
+					{
+						"activity": "Lookup CSV Array",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"source": {
+						"type": "AzureSqlSource",
+						"queryTimeout": "02:00:00",
+						"partitionOption": "None"
+					},
+					"dataset": {
+						"referenceName": "ds_azuredb",
+						"type": "DatasetReference",
+						"parameters": {
+							"Schema": "SalesLT",
+							"TableName": "TB_PlanCor"
+						}
+					},
+					"firstRowOnly": false
+				}
+			},
+			{
+				"name": "Lookup Table Array Query",
+				"type": "Lookup",
+				"dependsOn": [
+					{
+						"activity": "Lookup Table Array",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"source": {
+						"type": "AzureSqlSource",
+						"sqlReaderQuery": "SELECT Table_Schema, Table_Name\nFROM Information_Schema.Tables\nWHERE Table_Type = 'BASE TABLE'\nAND Table_Schema = 'SalesLT'",
+						"queryTimeout": "02:00:00",
+						"partitionOption": "None"
+					},
+					"dataset": {
+						"referenceName": "ds_azuredb",
+						"type": "DatasetReference",
+						"parameters": {
+							"Schema": "*",
+							"TableName": "*"
+						}
+					},
+					"firstRowOnly": false
+				}
+			}
+		],
+		"folder": {
+			"name": "Pipelines_Activities"
+		},
+		"annotations": []
+	}
+}
