@@ -1,5 +1,5 @@
 {
-	"name": "copy_getmetadata_foreach_filter",
+	"name": "copy_getmetadata_filter_foreach",
 	"properties": {
 		"activities": [
 			{
