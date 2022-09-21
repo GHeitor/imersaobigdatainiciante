@@ -55,7 +55,7 @@
 					"scripts": [
 						{
 							"type": "NonQuery",
-							"text": "Select *\nInto [SalesLT].[Tb_adf_script_activity]\nFrom [SalesLT].[Customer]"
+							"text": "SELECT *\nINTO [SalesLT].[Tb_adf_script_activity]\nFROM [SalesLT].[Customer]"
 						}
 					]
 				}
@@ -87,7 +87,7 @@
 					"scripts": [
 						{
 							"type": "Query",
-							"text": "Select * From [SalesLT].[Tb_adf_script_activity]"
+							"text": "SELECT *\nFROM [SalesLT].[Tb_adf_script_activity]"
 						}
 					]
 				}
