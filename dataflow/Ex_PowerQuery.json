@@ -1,0 +1,9 @@
+{
+	"name": "Ex_PowerQuery",
+	"properties": {
+		"type": "WranglingDataFlow",
+		"typeProperties": {
+			"sources": []
+		}
+	}
+}
