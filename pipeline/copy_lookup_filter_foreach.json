@@ -158,6 +158,9 @@
 				}
 			}
 		],
+		"folder": {
+			"name": "Pipelines_Activities"
+		},
 		"annotations": []
 	}
 }

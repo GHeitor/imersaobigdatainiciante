@@ -1,0 +1,60 @@
+{
+	"name": "copy_script_filter",
+	"properties": {
+		"description": "Filtrar um script Select",
+		"activities": [
+			{
+				"name": "Select Table",
+				"type": "Script",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"linkedServiceName": {
+					"referenceName": "ls_azure_sqldb",
+					"type": "LinkedServiceReference"
+				},
+				"typeProperties": {
+					"scripts": [
+						{
+							"type": "Query",
+							"text": "SELECT * FROM [SalesLT].[Tb_adf_script_activity]"
+						}
+					]
+				}
+			},
+			{
+				"name": "Filter Array Select",
+				"type": "Filter",
+				"dependsOn": [
+					{
+						"activity": "Select Table",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"userProperties": [],
+				"typeProperties": {
+					"items": {
+						"value": "@activity('Select Table').output.resultSets[0]['rows']",
+						"type": "Expression"
+					},
+					"condition": {
+						"value": "@equals(item().CustomerID,10)",
+						"type": "Expression"
+					}
+				}
+			}
+		],
+		"folder": {
+			"name": "Pipelines_Activities"
+		},
+		"annotations": []
+	}
+}
