@@ -1,0 +1,163 @@
+{
+	"name": "copy_lookup_filter_foreach",
+	"properties": {
+		"activities": [
+			{
+				"name": "Lookup Controller",
+				"type": "Lookup",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"source": {
+						"type": "DelimitedTextSource",
+						"storeSettings": {
+							"type": "AzureBlobFSReadSettings",
+							"recursive": true,
+							"enablePartitionDiscovery": false
+						},
+						"formatSettings": {
+							"type": "DelimitedTextReadSettings",
+							"skipLineCount": 1
+						}
+					},
+					"dataset": {
+						"referenceName": "ds_dls_csv",
+						"type": "DatasetReference",
+						"parameters": {
+							"container": "files",
+							"path": "controller",
+							"file": "controller_tables.csv",
+							"delimiter": ";"
+						}
+					},
+					"firstRowOnly": false
+				}
+			},
+			{
+				"name": "Filter Table Load",
+				"type": "Filter",
+				"dependsOn": [
+					{
+						"activity": "Lookup Controller",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"userProperties": [],
+				"typeProperties": {
+					"items": {
+						"value": "@activity('Lookup Controller').output.value",
+						"type": "Expression"
+					},
+					"condition": {
+						"value": "@equals(item().prop_5,'1')",
+						"type": "Expression"
+					}
+				}
+			},
+			{
+				"name": "ForEach Parquet",
+				"type": "ForEach",
+				"dependsOn": [
+					{
+						"activity": "Filter Table Load",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"userProperties": [],
+				"typeProperties": {
+					"items": {
+						"value": "@activity('Lookup Controller').output.value",
+						"type": "Expression"
+					},
+					"activities": [
+						{
+							"name": "sql_to_bronze",
+							"type": "Copy",
+							"dependsOn": [],
+							"policy": {
+								"timeout": "0.12:00:00",
+								"retry": 0,
+								"retryIntervalInSeconds": 30,
+								"secureOutput": false,
+								"secureInput": false
+							},
+							"userProperties": [],
+							"typeProperties": {
+								"source": {
+									"type": "SqlServerSource",
+									"queryTimeout": "02:00:00",
+									"partitionOption": "None"
+								},
+								"sink": {
+									"type": "DelimitedTextSink",
+									"storeSettings": {
+										"type": "AzureBlobFSWriteSettings"
+									},
+									"formatSettings": {
+										"type": "DelimitedTextWriteSettings",
+										"quoteAllText": true,
+										"fileExtension": ".txt"
+									}
+								},
+								"enableStaging": false,
+								"translator": {
+									"type": "TabularTranslator",
+									"typeConversion": true,
+									"typeConversionSettings": {
+										"allowDataTruncation": true,
+										"treatBooleanAsNumber": false
+									}
+								}
+							},
+							"inputs": [
+								{
+									"referenceName": "ds_sql_server",
+									"type": "DatasetReference",
+									"parameters": {
+										"schema": {
+											"value": "@item().Prop_1",
+											"type": "Expression"
+										},
+										"TableName": {
+											"value": "@item().Prop_4",
+											"type": "Expression"
+										}
+									}
+								}
+							],
+							"outputs": [
+								{
+									"referenceName": "ds_dls_csv_s_directory",
+									"type": "DatasetReference",
+									"parameters": {
+										"container": {
+											"value": "@item().Prop_3",
+											"type": "Expression"
+										},
+										"file": {
+											"value": "@concat(item().Prop_4, '.csv')",
+											"type": "Expression"
+										},
+										"delimiter": ";"
+									}
+								}
+							]
+						}
+					]
+				}
+			}
+		],
+		"annotations": []
+	}
+}
